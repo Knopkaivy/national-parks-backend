@@ -20,8 +20,8 @@ const productSchema = new Schema({
     description: String,
     details: [String],
     images: {type: [imageSchema], required: true},
-    availableSizes: [String],
-    availableFinishes: [String],
+    sizes: [String],
+    finishes: [String],
 }, { timestamps: true })
 
 export default mongoose.model('Product', productSchema)
