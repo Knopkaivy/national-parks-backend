@@ -5,7 +5,7 @@ export const getAllInventory = async (req, res) => {
     const inventory = await Inventory.find();
     res.status(200).json(inventory);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -20,7 +20,7 @@ export const getInventoryByProduct = async (req, res) => {
     }
     res.status(200).json(inventory);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -33,7 +33,7 @@ export const createInventory = async (req, res) => {
     }
     res.status(201).json(inventoryRecord);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -48,7 +48,7 @@ export const getInventoryByProductAndVariant = async (req, res) => {
     }
     res.status(200).json(inventory);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -68,7 +68,7 @@ export const updateInventoryByProductAndVariant = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -86,6 +86,6 @@ export const deleteInventoryByProductAndVariant = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };

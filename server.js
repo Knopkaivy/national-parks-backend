@@ -8,6 +8,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
 import pricingRoutes from "./routes/pricingRoutes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -20,6 +21,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/pricing", pricingRoutes);
+app.use(errorHandler);
 
 (async () => {
   await connectDB();

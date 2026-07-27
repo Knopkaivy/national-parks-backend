@@ -5,7 +5,7 @@ export const getAllPricing = async (req, res) => {
     const pricing = await Pricing.find();
     res.status(200).json(pricing);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -20,7 +20,7 @@ export const getPricingByProductId = async (req, res) => {
     }
     res.status(200).json(pricing);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -36,7 +36,7 @@ export const createPricing = async (req, res) => {
     }
     res.status(201).json(pricing);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -56,7 +56,7 @@ export const updatePricingByProductId = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -71,7 +71,7 @@ export const deletePricingByProductId = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -80,7 +80,7 @@ export const getAllSizeModifiers = async (req, res) => {
     const modifiers = await SizeModifier.find();
     res.status(200).json(modifiers);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -95,7 +95,7 @@ export const getSizeModifierBySize = async (req, res) => {
     }
     res.status(200).json(modifier);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -110,7 +110,7 @@ export const createSizeModifier = async (req, res) => {
     }
     res.status(201).json(newModifier);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -132,7 +132,7 @@ export const updateSizeModifierBySize = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -147,6 +147,6 @@ export const deleteSizeModifierBySize = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };

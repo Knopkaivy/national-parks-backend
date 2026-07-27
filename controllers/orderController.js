@@ -123,7 +123,7 @@ export const getOrderById = async (req, res) => {
     }
     res.status(200).json(order);
   } catch (error) {
-    res.status(500);
+    next(error);
   }
 };
 
@@ -140,7 +140,7 @@ export const getMyOrders = async (req, res) => {
     }
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -152,7 +152,7 @@ export const getAllOrders = async (req, res) => {
     }
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -169,6 +169,6 @@ export const updateOrderStatus = async (req, res) => {
     }
     res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };

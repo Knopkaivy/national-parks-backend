@@ -8,7 +8,7 @@ export const getAllUsers = async (req, res) => {
     }
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -20,7 +20,7 @@ export const getMe = async (req, res) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -33,7 +33,7 @@ export const getUserById = async (req, res) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -63,7 +63,7 @@ export const updateUser = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -76,6 +76,6 @@ export const deleteUser = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
