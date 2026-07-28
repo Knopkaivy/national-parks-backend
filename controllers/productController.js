@@ -1,6 +1,6 @@
 import { Product } from "../models/index.js";
 
-export const getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
   try {
     const { park, style } = req.query;
     const filter = { ...(park && { park }), ...(style && { style }) };
@@ -11,7 +11,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductBySlug = async (req, res) => {
+export const getProductBySlug = async (req, res, next) => {
   try {
     const slug = req.params.slug;
     const product = await Product.findOne({ slug });
@@ -24,7 +24,7 @@ export const getProductBySlug = async (req, res) => {
   }
 };
 
-export const createProduct = async (req, res) => {
+export const createProduct = async (req, res, next) => {
   try {
     const product = req.body;
     const response = await Product.create(product);
@@ -34,7 +34,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res) => {
+export const updateProduct = async (req, res, next) => {
   try {
     const product = req.body;
     const slug = req.params.slug;
@@ -50,7 +50,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const slug = req.params.slug;
     const response = await Product.findOneAndDelete({ slug });

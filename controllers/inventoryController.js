@@ -1,6 +1,6 @@
 import { Inventory } from "../models/index.js";
 
-export const getAllInventory = async (req, res) => {
+export const getAllInventory = async (req, res, next) => {
   try {
     const inventory = await Inventory.find();
     res.status(200).json(inventory);
@@ -9,7 +9,7 @@ export const getAllInventory = async (req, res) => {
   }
 };
 
-export const getInventoryByProduct = async (req, res) => {
+export const getInventoryByProduct = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const inventory = await Inventory.find({ product: productId });
@@ -24,10 +24,10 @@ export const getInventoryByProduct = async (req, res) => {
   }
 };
 
-export const createInventory = async (req, res) => {
+export const createInventory = async (req, res, next) => {
   try {
-    const inventory = req.body.inventory;
-    const inventoryRecord = await Inventory.create(inventory);
+    const { product, variant, count } = req.body;
+    const inventoryRecord = await Inventory.create({ product, variant, count });
     if (!inventoryRecord) {
       return res.status(404).json({ message: "Unable to create new record" });
     }
@@ -37,7 +37,7 @@ export const createInventory = async (req, res) => {
   }
 };
 
-export const getInventoryByProductAndVariant = async (req, res) => {
+export const getInventoryByProductAndVariant = async (req, res, next) => {
   try {
     const { productId, variant } = req.params;
     const inventory = await Inventory.find({ product: productId, variant });
@@ -52,7 +52,7 @@ export const getInventoryByProductAndVariant = async (req, res) => {
   }
 };
 
-export const updateInventoryByProductAndVariant = async (req, res) => {
+export const updateInventoryByProductAndVariant = async (req, res, next) => {
   try {
     const { productId, variant } = req.params;
     const { quantity } = req.body;
@@ -72,7 +72,7 @@ export const updateInventoryByProductAndVariant = async (req, res) => {
   }
 };
 
-export const deleteInventoryByProductAndVariant = async (req, res) => {
+export const deleteInventoryByProductAndVariant = async (req, res, next) => {
   try {
     const { productId, variant } = req.params;
     const result = await Inventory.findOneAndDelete({

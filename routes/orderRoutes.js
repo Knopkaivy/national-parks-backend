@@ -6,6 +6,7 @@ import {
   getAllOrders,
   getMyOrders,
   updateOrderStatus,
+  deleteOrderStatus,
 } from "../controllers/orderController.js";
 
 const router = Router();
@@ -14,5 +15,6 @@ router.get("/all", protect, adminOnly, getAllOrders);
 router.get("/my-orders", protect, getMyOrders);
 router.get("/:orderId", protect, getOrderById);
 router.put("/:orderId", protect, adminOnly, updateOrderStatus);
+router.delete("/:orderId", protect, adminOnly, deleteOrderStatus);
 
 export default router;

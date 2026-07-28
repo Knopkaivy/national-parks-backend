@@ -25,7 +25,7 @@ const checkInventory = async (items) => {
       }
 
       if (inventory.count < quantity) {
-        throw new InsufficientStockErrorError(variant);
+        throw new InsufficientStockError(variant);
       }
     }),
   );
@@ -55,9 +55,18 @@ const createOrderDocument = async (
       const { productId, size, finish, quantity } = item;
       const product = await Product.findById(productId);
       const pricing = await Pricing.findOne({ product: productId });
+      if (!pricing) {
+        throw new Error(`No pricing found for product ${productId}`);
+      }
       const basePrice = pricing.basePrice;
       const sizeModifier = await SizeModifier.findOne({ size });
-      const itemTotal = (basePrice + sizeModifier.modifier) * quantity;
+      if (!sizeModifier) {
+        throw new Error(`No size modifier found for size ${size}`);
+      }
+      const itemTotal = +(
+        (basePrice + sizeModifier.modifier) *
+        quantity
+      ).toFixed(2);
       const snapshot = {
         productId,
         productName: product.name,
@@ -75,12 +84,12 @@ const createOrderDocument = async (
     subtotal < FREE_SHIPPING_THRESHOLD ? STANDART_SHIPPING_COST : 0;
   const calculatedTotal = +(subtotal + shippingCost).toFixed(2);
   if (Math.abs(calculatedTotal - expectedTotal) > 0.01) {
-    throw new PriceMismatchErrorError();
+    throw new PriceMismatchError();
   }
   const orderDocument = {
     orderItems,
     shippingAddress,
-    userId,
+    user: userId,
     totalPrice: subtotal,
     shippingCost,
     totalWithShipping: calculatedTotal,
@@ -88,7 +97,7 @@ const createOrderDocument = async (
   return orderDocument;
 };
 
-export const createOrder = async (req, res) => {
+export const createOrder = async (req, res, next) => {
   try {
     const { items, shippingAddress, totalWithShipping } = req.body;
     const userId = req.user.userId;
@@ -115,9 +124,9 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const getOrderById = async (req, res) => {
+export const getOrderById = async (req, res, next) => {
   try {
-    const order = await Order.findById(req.body.orderId);
+    const order = await Order.findById(req.params.orderId);
     if (!order) {
       return res.status(400).json({ message: "No such order" });
     }
@@ -127,9 +136,9 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-export const getMyOrders = async (req, res) => {
+export const getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ userId: req.user.userId });
+    const orders = await Order.find({ user: req.user.userId });
     if (!orders) {
       return res.status(400).json({ message: "No orders available" });
     }
@@ -144,7 +153,7 @@ export const getMyOrders = async (req, res) => {
   }
 };
 
-export const getAllOrders = async (req, res) => {
+export const getAllOrders = async (req, res, next) => {
   try {
     const orders = await Order.find();
     if (!orders) {
@@ -156,16 +165,35 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-export const updateOrderStatus = async (req, res) => {
+export const updateOrderStatus = async (req, res, next) => {
   try {
-    const orderId = req.body.orderId;
-    const result = await Order.findByIdAndUpdate(orderId, {
-      status: req.body.orderStatus,
-    });
+    const orderId = req.params.orderId;
+    const result = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        status: req.body.status,
+      },
+      { new: true },
+    );
     if (!result) {
       return res
         .status(400)
         .json({ message: `Unable to update order ${orderId} status` });
+    }
+    res.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteOrderStatus = async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+    const result = await Order.findByIdAndDelete(orderId);
+    if (!result) {
+      return res
+        .status(400)
+        .json({ message: `Unable to delete order ${orderId}` });
     }
     res.status(201).json(result);
   } catch (error) {

@@ -1,6 +1,6 @@
 import { User } from "../models/index.js";
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find().select("-password");
     if (!users) {
@@ -12,7 +12,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const getMe = async (req, res) => {
+export const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId).select("-password");
     if (!user) {
@@ -24,7 +24,7 @@ export const getMe = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId).select("-password");
@@ -37,7 +37,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   try {
     const { firstName, lastName, phone, shippingAddress } = req.body;
     const userId = req.params.userId;
@@ -67,7 +67,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const result = await User.findByIdAndDelete(userId);

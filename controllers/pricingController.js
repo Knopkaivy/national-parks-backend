@@ -1,6 +1,6 @@
 import { Pricing, SizeModifier } from "../models/index.js";
 
-export const getAllPricing = async (req, res) => {
+export const getAllPricing = async (req, res, next) => {
   try {
     const pricing = await Pricing.find();
     res.status(200).json(pricing);
@@ -9,7 +9,7 @@ export const getAllPricing = async (req, res) => {
   }
 };
 
-export const getPricingByProductId = async (req, res) => {
+export const getPricingByProductId = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const pricing = await Pricing.findOne({ product: productId });
@@ -24,11 +24,10 @@ export const getPricingByProductId = async (req, res) => {
   }
 };
 
-export const createPricing = async (req, res) => {
+export const createPricing = async (req, res, next) => {
   try {
-    const productId = req.params.productId;
-    const basePrice = req.body.basePrice;
-    const pricing = await Pricing.create({ product: productId, basePrice });
+    const { product, basePrice } = req.body;
+    const pricing = await Pricing.create({ product, basePrice });
     if (!pricing) {
       return res
         .status(400)
@@ -40,7 +39,7 @@ export const createPricing = async (req, res) => {
   }
 };
 
-export const updatePricingByProductId = async (req, res) => {
+export const updatePricingByProductId = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const basePrice = req.body.basePrice;
@@ -60,7 +59,7 @@ export const updatePricingByProductId = async (req, res) => {
   }
 };
 
-export const deletePricingByProductId = async (req, res) => {
+export const deletePricingByProductId = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const result = await Pricing.findOneAndDelete({ product: productId });
@@ -75,7 +74,7 @@ export const deletePricingByProductId = async (req, res) => {
   }
 };
 
-export const getAllSizeModifiers = async (req, res) => {
+export const getAllSizeModifiers = async (req, res, next) => {
   try {
     const modifiers = await SizeModifier.find();
     res.status(200).json(modifiers);
@@ -84,7 +83,7 @@ export const getAllSizeModifiers = async (req, res) => {
   }
 };
 
-export const getSizeModifierBySize = async (req, res) => {
+export const getSizeModifierBySize = async (req, res, next) => {
   try {
     const size = req.params.size;
     const modifier = await SizeModifier.findOne({ size });
@@ -99,7 +98,7 @@ export const getSizeModifierBySize = async (req, res) => {
   }
 };
 
-export const createSizeModifier = async (req, res) => {
+export const createSizeModifier = async (req, res, next) => {
   try {
     const { size, modifier } = req.body;
     const newModifier = await SizeModifier.create({ size, modifier });
@@ -114,7 +113,7 @@ export const createSizeModifier = async (req, res) => {
   }
 };
 
-export const updateSizeModifierBySize = async (req, res) => {
+export const updateSizeModifierBySize = async (req, res, next) => {
   try {
     const size = req.params.size;
     const modifier = req.body.modifier;
@@ -136,7 +135,7 @@ export const updateSizeModifierBySize = async (req, res) => {
   }
 };
 
-export const deleteSizeModifierBySize = async (req, res) => {
+export const deleteSizeModifierBySize = async (req, res, next) => {
   try {
     const size = req.params.size;
     const result = await SizeModifier.findOneAndDelete({ size });
