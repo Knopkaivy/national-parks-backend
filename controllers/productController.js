@@ -33,7 +33,7 @@ export const getProductBySlug = async (req, res, next) => {
       SizeModifier.find(),
     ]);
 
-    const sizePricing = sizeModifiers
+    const sizesPricing = sizeModifiers
       .filter((modifier) => product.sizes.includes(modifier.size))
       .map((modifier) => ({
         size: modifier.size,
@@ -44,7 +44,7 @@ export const getProductBySlug = async (req, res, next) => {
     res.status(200).json({
       ...product.toObject(),
       basePrice: pricing?.basePrice ?? null,
-      sizePricing,
+      sizesPricing,
     });
   } catch (error) {
     next(error);
