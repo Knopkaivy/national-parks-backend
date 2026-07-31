@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import { Product, SizeModifier } from "./models/index.js";
+import { Inventory, Product, SizeModifier } from "./models/index.js";
 
 const U = (id, w = 800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -548,6 +548,7 @@ const seedSizeModifierData = [
 const seedDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
+    await Inventory.deleteMany({});
     await Product.deleteMany({});
     await Product.insertMany(seedProductData);
     await SizeModifier.deleteMany({});

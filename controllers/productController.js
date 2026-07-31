@@ -1,4 +1,4 @@
-import { Pricing, Product, SizeModifier } from "../models/index.js";
+import { Inventory, Pricing, Product, SizeModifier } from "../models/index.js";
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -6,14 +6,28 @@ export const getProducts = async (req, res, next) => {
     const filter = { ...(park && { park }), ...(style && { style }) };
     const products = await Product.find(filter);
     const productIds = products.map((product) => product._id);
-    const pricingRecords = await Pricing.find({ product: { $in: productIds } });
+    const [pricingRecords, inventoryRecords] = await Promise.all([
+      Pricing.find({ product: { $in: productIds } }),
+      Inventory.find({
+        product: { $in: productIds },
+        count: { $ne: 0 },
+      }),
+    ]);
+
     const pricingMap = {};
     pricingRecords.forEach((record) => {
       pricingMap[record.product.toString()] = record.basePrice;
     });
+
+    const inventoryMap = {};
+    inventoryRecords.forEach((record) => {
+      inventoryMap[record.product.toString()] = true;
+    });
+
     const productsWithPricing = products.map((product) => ({
       ...product.toObject(),
       basePrice: pricingMap[product._id.toString()] ?? null,
+      inStock: inventoryMap[product._id.toString()] ?? false,
     }));
     res.status(200).json(productsWithPricing);
   } catch (error) {
@@ -28,7 +42,8 @@ export const getProductBySlug = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    const [pricing, sizeModifiers] = await Promise.all([
+    const [inventory, pricing, sizeModifiers] = await Promise.all([
+      Inventory.find({ product: product._id }),
       Pricing.findOne({ product: product._id }),
       SizeModifier.find(),
     ]);
@@ -41,10 +56,16 @@ export const getProductBySlug = async (req, res, next) => {
           ? +(pricing.basePrice + modifier.modifier).toFixed(2)
           : null,
       }));
+    const stockByVariant = {};
+    inventory.forEach(
+      (record) => (stockByVariant[record.variant] = record.count),
+    );
+
     res.status(200).json({
       ...product.toObject(),
       basePrice: pricing?.basePrice ?? null,
       sizesPricing,
+      stockByVariant,
     });
   } catch (error) {
     next(error);
