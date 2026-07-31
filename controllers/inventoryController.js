@@ -1,4 +1,4 @@
-import { Inventory } from "../models/index.js";
+import { Inventory, Product } from "../models/index.js";
 
 export const getAllInventory = async (req, res, next) => {
   try {
@@ -26,7 +26,23 @@ export const getInventoryByProduct = async (req, res, next) => {
 
 export const createInventory = async (req, res, next) => {
   try {
-    const { product, variant, count } = req.body;
+    const { product, size, finish, count } = req.body;
+    const variant = `${size}-${finish}`;
+    console.log("product is ", product._id);
+    const productRecord = await Product.findOne({ product });
+    if (!productRecord) {
+      return res.status(404).json({
+        message: `Not found product ${product}`,
+      });
+    }
+    if (
+      !productRecord.sizes.includes(size) ||
+      !productRecord.finishes.includes(finish)
+    ) {
+      return res.status(404).json({
+        message: `${variant} variant is not available for product ${productRecord._id}`,
+      });
+    }
     const inventoryRecord = await Inventory.create({ product, variant, count });
     if (!inventoryRecord) {
       return res.status(404).json({ message: "Unable to create new record" });
