@@ -24,11 +24,13 @@ export const getProducts = async (req, res, next) => {
       inventoryMap[record.product.toString()] = true;
     });
 
-    const productsWithPricing = products.map((product) => ({
-      ...product.toObject(),
-      basePrice: pricingMap[product._id.toString()] ?? null,
-      inStock: inventoryMap[product._id.toString()] ?? false,
-    }));
+    const productsWithPricing = products
+      .map((product) => ({
+        ...product.toObject(),
+        basePrice: pricingMap[product._id.toString()] ?? null,
+        inStock: inventoryMap[product._id.toString()] ?? false,
+      }))
+      .filter((product) => product.basePrice !== null);
     res.status(200).json(productsWithPricing);
   } catch (error) {
     next(error);
@@ -47,6 +49,12 @@ export const getProductBySlug = async (req, res, next) => {
       Pricing.findOne({ product: product._id }),
       SizeModifier.find(),
     ]);
+
+    if (!pricing) {
+      return res
+        .status(404)
+        .json({ message: `Product ${product._id} is missing pricing data` });
+    }
 
     const sizesPricing = sizeModifiers
       .filter((modifier) => product.sizes.includes(modifier.size))

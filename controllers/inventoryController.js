@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Inventory, Product } from "../models/index.js";
 
 export const getAllInventory = async (req, res, next) => {
@@ -27,9 +28,11 @@ export const getInventoryByProduct = async (req, res, next) => {
 export const createInventory = async (req, res, next) => {
   try {
     const { product, size, finish, count } = req.body;
+    if (!product || !mongoose.Types.ObjectId.isValid(product)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
     const variant = `${size}-${finish}`;
-    console.log("product is ", product._id);
-    const productRecord = await Product.findOne({ product });
+    const productRecord = await Product.findOne({ _id: product });
     if (!productRecord) {
       return res.status(404).json({
         message: `Not found product ${product}`,
