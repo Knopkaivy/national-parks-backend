@@ -13,7 +13,7 @@ export const register = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
-    res.status(201).json({ token });
+    res.status(201).json({ token, newUser });
   } catch (error) {
     next(error);
   }
