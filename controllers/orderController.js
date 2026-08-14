@@ -117,7 +117,7 @@ export const createOrder = async (req, res, next) => {
     } catch (error) {
       console.error(`INVENTORY_SYNC_FAILED: Order ${result._id}`, erro.message);
     }
-    res.status(201).json(orderDocument);
+    res.status(201).json(result);
   } catch (error) {
     const status = error.statusCode || 500;
     res.status(status).json({ message: error.message });
